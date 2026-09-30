@@ -1,0 +1,122 @@
+[
+  {
+    "id": "vc-targets",
+    "name": "VC 매출 활성화",
+    "description": "타겟처와 매출 목표를 한눈에 확인하세요.",
+    "url": "./vc-targets.html",
+    "kind": "local",
+    "category": "VC 평가",
+    "folder": "VC 평가",
+    "color": "blue",
+    "art": "chart",
+    "rank": 0
+  },
+  {
+    "id": "vc-stories",
+    "name": "VC 성공 사례",
+    "description": "매출 활성화 성공 사례와 자문 내용을 살펴보세요.",
+    "url": "./vc-stories.html",
+    "kind": "local",
+    "category": "VC 평가",
+    "folder": "VC 평가",
+    "color": "blue",
+    "art": "document",
+    "rank": 0
+  },
+  {
+    "id": "folder-89acf5a00183",
+    "name": "VC 평가현황",
+    "description": "VC 평가 진행 상황을 확인하세요.",
+    "url": "https://script.google.com/macros/s/AKfycbz7CQu1gxzFQWtgu_BTommoaoWie4oHoN1BvhjBOG8cLItnGwL_qdwli6uF6L83J-I/exec",
+    "kind": "external",
+    "category": "VC 평가",
+    "folder": "VC 평가",
+    "color": "blue",
+    "art": "chart",
+    "rank": 0
+  },
+  {
+    "id": "folder-bc802bc3a174",
+    "name": "시장 품절약",
+    "description": "시장 품절약 현황을 확인하세요.",
+    "url": "https://scm-cpu.github.io/VC-SLA/soldout/",
+    "kind": "external",
+    "category": "VC 평가",
+    "folder": "VC 평가",
+    "color": "blue",
+    "art": "document",
+    "rank": 0
+  },
+  {
+    "id": "folder-3fc638651284",
+    "name": "EPM 작성하기",
+    "description": "EPM 업무 대시보드로 이동하세요.",
+    "url": "https://scmepm2026.vercel.app/dashboard",
+    "kind": "external",
+    "category": "유통지원팀 할일",
+    "folder": "유통지원팀 할일",
+    "color": "teal",
+    "art": "tasks",
+    "rank": 1
+  },
+  {
+    "id": "folder-f3fbcfc40c3d",
+    "name": "구글 스프레드시트",
+    "description": "팀 업무 스프레드시트를 열고 작성하세요.",
+    "url": "https://docs.google.com/spreadsheets/d/1k8ZihujSAs_DKBLEkOKiKo44Xf4RdRkOvAypuJ7qGzk/edit?gid=0#gid=0",
+    "kind": "external",
+    "category": "유통지원팀 할일",
+    "folder": "유통지원팀 할일",
+    "color": "teal",
+    "art": "table",
+    "rank": 1
+  },
+  {
+    "id": "folder-19d221fe06cb",
+    "name": "오늘의 할 일",
+    "description": "유통지원팀의 오늘 업무를 확인하세요.",
+    "url": "https://scm-cpu.github.io/todo-dashboard/",
+    "kind": "external",
+    "category": "유통지원팀 할일",
+    "folder": "유통지원팀 할일",
+    "color": "teal",
+    "art": "tasks",
+    "rank": 1
+  },
+  {
+    "id": "folder-10cdfa190f07",
+    "name": "팀 스케줄",
+    "description": "유통지원팀의 일정과 계획을 확인하세요.",
+    "url": "https://vercel-deploy-umber-seven.vercel.app/schedule.html",
+    "kind": "external",
+    "category": "유통지원팀 할일",
+    "folder": "유통지원팀 할일",
+    "color": "teal",
+    "art": "calendar",
+    "rank": 1
+  },
+  {
+    "id": "folder-23614202bc19",
+    "name": "SLA 평가 시스템",
+    "description": "SLA 평가 시스템으로 바로 이동하세요.",
+    "url": "https://topdoor.github.io/SLA-Assessment-System/",
+    "kind": "external",
+    "category": "SLA 평가",
+    "folder": "SAL평가시스템",
+    "color": "indigo",
+    "art": "chart",
+    "rank": 2
+  },
+  {
+    "id": "folder-89a0f2b3bede",
+    "name": "직거래 배송현황",
+    "description": "직거래 배송 진행 현황을 확인하세요.",
+    "url": "https://scm-cpu.github.io/SCM/",
+    "kind": "external",
+    "category": "직거래",
+    "folder": "직거래",
+    "color": "slate",
+    "art": "truck",
+    "rank": 3
+  }
+]

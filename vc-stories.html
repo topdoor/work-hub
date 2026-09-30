@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VC 매출 활성화 자문 내용</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f7f4ee;
+    --surface: #ffffff;
+    --surface-2: #f0ece2;
+    --ink: #1a1710;
+    --ink-2: #5c5644;
+    --ink-muted: #8f8873;
+    --border: rgba(26,23,16,0.10);
+    --border-strong: rgba(26,23,16,0.18);
+    --reg: #2a78d6;
+    --vc: #eb6834;
+    --gold: #92400e;
+    --gold-bg: #fde68a;
+    --gold-ink: #78350f;
+    --good: #0ca30c;
+    --shadow: 0 1px 2px rgba(26,23,16,0.05), 0 10px 30px -14px rgba(26,23,16,0.18);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #15130d;
+      --surface: #1d1a14;
+      --surface-2: #262119;
+      --ink: #f6f2e9;
+      --ink-2: #c7c0ac;
+      --ink-muted: #938d78;
+      --border: rgba(246,242,233,0.10);
+      --border-strong: rgba(246,242,233,0.20);
+      --reg: #4f97ef;
+      --vc: #ea7a4a;
+      --gold: #fcd34d;
+      --gold-bg: rgba(252,211,77,0.14);
+      --gold-ink: #fcd34d;
+      --good: #34d058;
+      --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -14px rgba(0,0,0,0.6);
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #15130d;
+    --surface: #1d1a14;
+    --surface-2: #262119;
+    --ink: #f6f2e9;
+    --ink-2: #c7c0ac;
+    --ink-muted: #938d78;
+    --border: rgba(246,242,233,0.10);
+    --border-strong: rgba(246,242,233,0.20);
+    --reg: #4f97ef;
+    --vc: #ea7a4a;
+    --gold: #fcd34d;
+    --gold-bg: rgba(252,211,77,0.14);
+    --gold-ink: #fcd34d;
+    --good: #34d058;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -14px rgba(0,0,0,0.6);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: 'Pretendard', system-ui, -apple-system, 'Segoe UI', 'Malgun Gothic', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 44px 24px 64px; }
+
+  .eyebrow { font-size: 12px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-muted); }
+  h1 { font-size: 30px; font-weight: 800; margin: 6px 0 24px; letter-spacing: -0.01em; text-wrap: balance; }
+
+  .tab-bar {
+    display: inline-flex; gap: 4px; background: var(--surface-2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 4px; margin-bottom: 32px;
+  }
+  .tab-btn {
+    font-family: inherit; font-size: 13.5px; color: var(--ink-muted); background: transparent;
+    border: none; border-radius: 9px; padding: 9px 20px; cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .tab-btn:hover:not(.active) { color: var(--ink-2); }
+  .tab-btn.active { background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+
+  .case-panel { display: none; }
+  .case-panel.active { display: block; animation: caseIn 0.32s ease; }
+  @keyframes caseIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .case-name { font-size: 20px; color: var(--ink); margin-bottom: 12px; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+  .meta-chip {
+    font-size: 12.5px; color: var(--ink-2); background: var(--surface-2);
+    border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px;
+  }
+
+  .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 36px; }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    padding: 18px 18px 16px; box-shadow: var(--shadow);
+  }
+  .stat-label { font-size: 12px; color: var(--ink-muted); }
+  .stat-value { font-size: 30px; font-variant-numeric: tabular-nums; margin-top: 6px; letter-spacing: -0.01em; }
+  .stat-value.reg { color: var(--reg); }
+  .stat-value.vc { color: var(--vc); }
+  .stat-sub { font-size: 11.5px; color: var(--ink-muted); margin-top: 4px; }
+
+  section { margin-bottom: 40px; }
+  .section-title { font-size: 13px; color: var(--ink-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px; }
+
+  .chart-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 22px 22px 14px; box-shadow: var(--shadow);
+  }
+  .legend { display: flex; gap: 18px; font-size: 12.5px; color: var(--ink-2); margin-bottom: 14px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-swatch { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+  .chart-svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .bar-label { font-size: 10.5px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .month-label { font-size: 12px; fill: var(--ink-2); }
+  .partial-note { font-size: 10px; fill: var(--ink-muted); }
+  .bar { cursor: pointer; transition: opacity 0.12s; }
+  .bar:hover { opacity: 0.82; }
+
+  .tip {
+    position: fixed; pointer-events: none; background: var(--ink); color: var(--page);
+    font-size: 11.5px; padding: 8px 10px; border-radius: 8px; line-height: 1.5;
+    z-index: 50; box-shadow: var(--shadow); opacity: 0; transition: opacity 0.08s; white-space: nowrap;
+  }
+  .tip.show { opacity: 1; }
+  .tip b { font-variant-numeric: tabular-nums; }
+
+  .insight-box {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 22px 24px; box-shadow: var(--shadow); margin-bottom: 22px;
+  }
+  .insight-box p { line-height: 1.7; font-size: 14px; color: var(--ink-2); margin: 0; }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 0; }
+  .tag {
+    font-size: 12px; color: var(--ink); background: var(--surface-2); border: 1px solid var(--border-strong);
+    border-radius: 8px; padding: 6px 11px;
+  }
+
+  .qa-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+    padding: 24px 26px; box-shadow: var(--shadow);
+  }
+  .qa-group { margin-bottom: 24px; }
+  .qa-group:last-child { margin-bottom: 0; }
+  .qa-group-title { font-size: 13px; color: var(--gold-ink); background: var(--gold-bg); display: inline-block; border-radius: 7px; padding: 4px 10px; margin-bottom: 12px; }
+  .qa-item { padding: 11px 0; border-bottom: 1px solid var(--border); }
+  .qa-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .qa-item:first-child { padding-top: 0; }
+  .qa-q { font-size: 13.5px; color: var(--ink-muted); line-height: 1.5; margin-bottom: 5px; }
+  .qa-a { font-size: 14.5px; color: var(--ink); line-height: 1.75; }
+  .qa-a b { color: var(--vc); font-weight: 400; }
+
+  .followup-note {
+    margin-top: 18px; font-size: 12.5px; color: var(--ink-muted); line-height: 1.7;
+    background: var(--surface-2); border-radius: 10px; padding: 12px 16px;
+  }
+
+  .highlight-box {
+    background: var(--gold-bg); border: 1px solid var(--gold); border-radius: 16px;
+    padding: 20px 22px; margin-top: 22px;
+  }
+  .highlight-box .h-label {
+    font-size: 12px; font-weight: 400; text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--gold-ink); margin-bottom: 8px;
+  }
+  .highlight-box p { margin: 0; font-size: 14px; line-height: 1.7; color: var(--gold-ink); }
+
+  footer.note {
+    margin-top: 30px; font-size: 11.5px; color: var(--ink-muted); line-height: 1.7;
+    border-top: 1px solid var(--border); padding-top: 18px;
+  }
+
+  @media (max-width: 560px) {
+    .stat-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="eyebrow">자문 내용</div>
+  <h1>VC 매출 활성화</h1>
+
+  <div class="tab-bar" role="tablist">
+    <button class="tab-btn active" data-tab="seoulmedi" role="tab" aria-selected="true">서울메디약국</button>
+    <button class="tab-btn" data-tab="ewha" role="tab" aria-selected="false">이화정문약국</button>
+  </div>
+
+  <!-- ===================== 서울메디약국 ===================== -->
+  <div class="case-panel active" id="case-seoulmedi">
+    <div class="case-name">서울메디약국</div>
+    <div class="meta-row">
+      <span class="meta-chip">병원서울4 · 주민규</span>
+      <span class="meta-chip">고객단계 5단계</span>
+      <span class="meta-chip">자문순서 2번 · 2026-08-26 자문 완료</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">직거래 매출 (5~7월 평균)</div>
+        <div class="stat-value reg">2,423만</div>
+        <div class="stat-sub">VC 매출 3,053만 (1.26배)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">VC 매출 (8월 누계 ~26일)</div>
+        <div class="stat-value vc" id="v-vcaug-seoulmedi">-</div>
+        <div class="stat-sub">직거래 1,903만 대비 이미 2.9배</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">핵심 만족요인</div>
+        <div class="stat-value" style="font-size:18px; font-weight:400; line-height:1.4;">담당자 신뢰 · 배송속도</div>
+        <div class="stat-sub">새벽배송 편의성 반복 언급</div>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-title">월별 매출 추이</div>
+      <div class="chart-panel">
+        <div class="legend">
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--reg)"></span>직거래 매출</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--vc)"></span>VC 매출</div>
+        </div>
+        <svg class="chart-svg" id="chart-seoulmedi" viewBox="0 0 660 300"></svg>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">자문 인사이트 — 왜 통했나</div>
+      <div class="insight-box">
+        <p>2026-08-26 인터뷰에서 국장님은 <b style="color:var(--vc)">담당자에 대한 신뢰와 배송 속도</b>를 더샵플러스를 지속 이용하는 결정적 이유로 꼽았습니다. 대웅제약 영업사원의 소개로 시작해 시범 주문 후 빠른 배송을 확인하고 비중을 점차 늘려왔으며, 현재는 도매상별로 발주 금액 한도를 정해두고 운영 중입니다.</p>
+      </div>
+
+      <div class="qa-panel">
+        <div class="qa-group">
+          <div class="qa-group-title">1. 최초 계기 / 전환 배경</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스를 처음 알게 되고 사용하기 시작하신 계기가 무엇이었나요?</div>
+            <div class="qa-a">"처음에는 대웅제약 영업사원분이 소개해주셔서 알게 됐습니다. 도어락 비번 때문에 고민고민하다가 마침 기존 도매상 배송이 자꾸 늦어져서 고민하던 시기라 한번 시범적으로 몇 품목만 주문해봤는데, <b>생각보다 빠르게 와서 그때부터 조금씩 비중을 늘렸습니다.</b>"</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">2. 사용 패턴 / 의존도</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 전체 발주 물량 중 더샵플러스가 차지하는 비중은 어느 정도인가요?</div>
+            <div class="qa-a">"각 도매상마다 금액을 정해놓고 주문하고 있고, 더샵 같은 경우는 5천만원정도 수준으로 할려고 한다. 근데 그 금액이 넘을 때가 많은 것 같다."</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 새벽배송 외에 실제로 가장 자주, 유용하게 쓰시는 기능이나 서비스는?</div>
+            <div class="qa-a">가운교체 서비스도 자주 쓰고 있고, "현재 쓰고 있는 서비스는 대부분 다 쓰는 것 같다." 전반적인 서비스에 만족하고 사용 중.</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">3. 핵심 가치 / 만족 요인</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스를 지속적으로 이용하시는 결정적인 이유를 하나만 꼽는다면?</div>
+            <div class="qa-a"><b>담당자의 신뢰 / 배송 속도.</b></div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 상품 구색·가격·배송속도·사용 편의성 중 가장 만족하시는 요소는?</div>
+            <div class="qa-a">"새벽배송 편의성에 때문에 자주 쓰는 것 같다. 밤에 주문하면 출근할 때 미리 와있어서 자주 쓰는 것 같다."</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">4. 불편 / 이탈 리스크</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 최근 6개월 내 발주를 줄이거나 다른 채널로 옮기고 싶었던 순간이 있었다면?</div>
+            <div class="qa-a">구체적으로는 말씀 안 주셨지만, "신뢰가 깨지면 지금 쓰고 있는 다른 채널로 발주량이 옮겨가는 듯 합니다."</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스 사용 중 품절·지연 등을 경험하신 적이 있나요?</div>
+            <div class="qa-a">"다른 채널에서 옮기고 싶었던 순간은 신뢰가 깨지면이다. 그 만큼 신뢰가 중요하고 약속을 했으면 반드시 지켰으면 좋겠다"(배송, 담당자 약속, 환입 등의 약속).</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">5. 확장 가능성 / 제안</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 지금보다 발주 금액을 더 늘리시려면 어떤 조건이 필요할까요?</div>
+            <div class="qa-a">"금액을 정해놓기 보단 쓴 만큼 혜택이 있으면 좋겠다. 얼마 이상 발주 시 혜택이 똑같다면 그 이상으로 발주하지 않는다. 예를 들어 5천만원이나 6천만원이나 혜택이 동일하다면 5천만원 정도로만 주문하게 된다. <b>6천만, 7천만원 등 내가 주문한 만큼 혜택이 있다면 주문량을 더 늘릴 수 있다.</b>"</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 주변 동료 약사님께 더샵플러스를 추천해보신 적이 있나요?</div>
+            <div class="qa-a">"항상 모임에 나가면 추천하는 편이다. 전반적인 서비스가 만족하고 있어서 모임이 있을 때마다 추천하는 편이다."</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵의 SPEAKER가 되어 주실 수 있으신지?</div>
+            <div class="qa-a">큰 부정은 안 하셨습니다. 담당자를 통해서가 아닌 유통지원팀의 개별 연락도 허락하셨고, 연락처는 먼저 주시기로 하였습니다. 국장님이 젊으신 편이어서 향후 국장님이 운영하는 모임이나 회사가 운영하는 모임 등 <b>SPEAKER로 활용 가능성이 있습니다.</b></div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">Part 1. 고매출 이용 이유 파악</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 지금 약국에서 취급하시는 품목 중 더샵플러스로 채우는 비중이 큰 카테고리는?</div>
+            <div class="qa-a">도매상별로 정해진 금액대로 발주하는 편.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 새벽배송을 받으신 이후로 약국 운영이나 재고 관리 방식에 달라진 점이 있으신가요?</div>
+            <div class="qa-a">"특별히 바뀐 것은 없다. 내가 필요한 약을 빨리 받아볼 수 있어서 계속 찾게된다."</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 요즘 발주하실 때 가장 신경 쓰시는 부분은?</div>
+            <div class="qa-a">"정해놓고 발주하기 때문에 신경쓴다기 보다는 도매업체에서 신뢰가 깨지지 않는 것이 중요하다. <b>환입이 가장 스트레스이다</b>"(더샵의 환입정책 리드타임 10일에 대해 강조).</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">Part 2. 추가 확대 조건 파악</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 상품 구색이 지금보다 넓어진다면 추가로 발주를 옮기실 의향이 있는 카테고리는?</div>
+            <div class="qa-a">구색에 대한 스트레스 없음.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 결제조건(여신 한도, 정산주기)이나 가격조건이 개선된다면 발주 규모에 영향이 있을까요?</div>
+            <div class="qa-a">상관없음.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 지금 수준의 매출을 유지·확대하는 데 가장 큰 걸림돌이나 리스크는?</div>
+            <div class="qa-a">배송 / 담당자와의 신뢰가 가장 중요.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스가 딱 한 가지를 개선해준다면 발주를 더 늘리시겠다고 할 때, 그 한 가지는?</div>
+            <div class="qa-a">발주 금액에 따른 혜택이 다르다면 발주량을 늘릴 계획이 있음.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">담당자 신뢰</span>
+        <span class="tag">배송속도</span>
+        <span class="tag">가운교체 서비스</span>
+        <span class="tag">구간별 인센티브 요청</span>
+        <span class="tag">동료 약사 추천 활발</span>
+      </div>
+
+      <div class="highlight-box">
+        <div class="h-label">특이사항 — 더샵 스피커 후보</div>
+        <p>더샵 SPEAKER 제안에 긍정적으로 답변했습니다. 담당자를 거치지 않는 유통지원팀의 개별 연락도 허락했고, 연락처를 먼저 전달하기로 하셨습니다. 국장님이 비교적 젊은 편이라 향후 본인이 운영하는 모임이나 회사 행사에서 스피커로 활용될 가능성이 있습니다 — "⑤ 스피커 가능처" 기준에 해당하는 첫 확인 사례입니다.</p>
+      </div>
+    </section>
+
+    <footer class="note">
+      데이터 기준: 5~7월은 실측 월매출, 8월은 ~8/26 누계(진행중). VC 매출은 더샵 매출현황(VC2) 및 더샵플러스 회원 매출 현황 기준.<br />
+      인터뷰는 2026-08-26 실시된 국장님 녹취를 바탕으로 정리했습니다.
+    </footer>
+  </div>
+
+  <!-- ===================== 이화정문약국 ===================== -->
+  <div class="case-panel" id="case-ewha">
+    <div class="case-name">이화정문약국</div>
+    <div class="meta-row">
+      <span class="meta-chip">병원서울4 · 주민규</span>
+      <span class="meta-chip">고객단계 5단계</span>
+      <span class="meta-chip">자문순서 1번 · 2026-08-26 자문 완료</span>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-label">직거래 매출 (5~7월 평균)</div>
+        <div class="stat-value reg">2,413만</div>
+        <div class="stat-sub">VC 매출 5,457만 (2.26배)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">VC 매출 (8월 누계 ~26일)</div>
+        <div class="stat-value vc" id="v-vcaug-ewha">-</div>
+        <div class="stat-sub">직거래 2,422만 대비 이미 2.9배</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">핵심 만족요인</div>
+        <div class="stat-value" style="font-size:18px; font-weight:400; line-height:1.4;">배송속도 · 결품 없는 신뢰</div>
+        <div class="stat-sub">오전 주문 → 당일 오후 도착</div>
+      </div>
+    </div>
+
+    <section>
+      <div class="section-title">월별 매출 추이</div>
+      <div class="chart-panel">
+        <div class="legend">
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--reg)"></span>직거래 매출</div>
+          <div class="legend-item"><span class="legend-swatch" style="background:var(--vc)"></span>VC 매출</div>
+        </div>
+        <svg class="chart-svg" id="chart-ewha" viewBox="0 0 660 300"></svg>
+      </div>
+    </section>
+
+    <section>
+      <div class="section-title">자문 인사이트 — 왜 통했나</div>
+      <div class="insight-box">
+        <p>2026-08-26 실시된 실제 인터뷰에서 국장님은 <b style="color:var(--vc)">더샵플러스의 배송 속도와 결품 없는 신뢰성</b>을 가장 높게, 반복적으로 언급했습니다. 새벽배송 외에 약사가운 로테이션·폐의약품 수거 서비스까지 모두 이용 중이며, 서비스 확대에 대한 별도 요청 없이 "지금 수준으로 충분히 만족"한다고 답했습니다.</p>
+      </div>
+
+      <div class="qa-panel">
+        <div class="qa-group">
+          <div class="qa-group-title">1. 최초 계기 / 전환 배경</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스를 처음 알게 되고 사용하기 시작하신 계기가 무엇이었나요?</div>
+            <div class="qa-a">담당자 소개로 이용하게 되었는데 <b>서비스가 매우 만족스러움.</b></div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 도입 전에는 어떤 방식으로 발주하셨고, 무엇 때문에 전환하셨나요?</div>
+            <div class="qa-a">도매상별로 골고루 사용하는 편. 담당자의 권유로 더샵플러스를 사용했는데 서비스 만족도가 높아서 발주량이 계속 높아지고 있음.</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">2. 사용 패턴 / 의존도</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 전체 발주 물량 중 더샵플러스가 차지하는 비중은?</div>
+            <div class="qa-a">더샵플러스와 기존 도매상을 병행 이용 중. "우리가 오전에 주문하면 오후에 오고 어떨 때는 오후에 주문해도 그 날 올 때도 있다. <b>배송이 너무 빨라</b>"라며 더샵플러스 쪽 배송을 선호한다고 하심.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 새벽배송 외에 가장 자주, 유용하게 쓰시는 기능이나 서비스는?</div>
+            <div class="qa-a">약사가운 정기 교체(로테이션) 서비스와 폐의약품 수거 서비스. "제가 3개를 가지고 이렇게 이제 로테이션으로 돌아가면서 가운을 세탁하니까 굉장히 좋아요", "폐의약품 그것도 제가 몇 번 이용했는데 그래도 괜찮더라고요... 반품할 필요도 없고... 손님들이 주민센터에 안 갖다주고 약국으로 가져오는 사람들이 있어요. 그럼 제가 받아가지고 협의하고 처리하고"라고 답변하셨습니다.</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">3. 핵심 가치 / 만족 요인</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스를 지속적으로 이용하시는 결정적인 이유를 하나만 꼽는다면?</div>
+            <div class="qa-a">배송 속도와 결품 없이 받을 수 있다는 신뢰. "오전에 하면 바로 오후에 와요", "이대로 하면(다른 채널은) 2, 3일씩 걸리잖아요", "생각보다 더 빨리 오니까"라고 반복적으로 언급하셨고, 이 부분을 <b>가장 큰 만족 요인</b>으로 꼽으셨습니다.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 상품 구색·가격·배송속도·사용 편의성 중 가장 만족/아쉬운 요소는?</div>
+            <div class="qa-a">가장 만족하는 요소는 배송속도. 구색·가격에 대해서는 "그런 문제 별로 못 느껴봤어요... 그런 거 이외에는 또 똑같으니까... 크게 문제는 없었고"라고 답해, 타 채널 대비 큰 차이를 느끼지 못한다고 하셨습니다. 아쉬운 요소에 대한 명시적 언급은 없었습니다.</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">4. 불편 / 이탈 리스크</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 최근 6개월 내 발주를 줄이거나 다른 채널로 옮기고 싶었던 순간이 있었다면?</div>
+            <div class="qa-a">현재는 만족스럽지만, <b>배송이 늦어지면 옮기고 싶다</b>고 답변.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스 사용 중 품절·지연 등을 경험하신 적이 있나요?</div>
+            <div class="qa-a">더샵플러스 자체의 품절·지연은 없었음.</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">5. 확장 가능성 / 제안</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 지금보다 발주 금액을 더 늘리시려면 어떤 조건이 필요할까요?</div>
+            <div class="qa-a">명시적으로 추가 요청 사항은 없었습니다. "지금 현재 굉장히 만족을 하고 있어가지고 서비스는 이 정도로 충분하다고 나는 생각해", "서비스는 참 좋아요"라고 답하며 별도의 개선·확대 조건을 제시하지 않으셨습니다.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 주변 동료 약사님께 더샵플러스를 추천해보신 적이 있나요?</div>
+            <div class="qa-a">추천 의향이 있다고 답하셨습니다. "이런 좋은 서비스들을 모른다고 하면... 우리 약사님들 만날 기회 있으면은... 이런 것도 이야기 한번 해보고"라며, 1년에 한두 번 있는 약사 모임에서 소개하겠다고 하셨습니다.</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">Part 1. 고매출 이용 이유 파악</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스로 발주하시는 하루/일주일 루틴이 어떻게 되시나요?</div>
+            <div class="qa-a">"주문 직원이 우리 나한테 오더를 주면은 내가 이제 클릭하고 주문하는 거죠"라고 답하셨고, 주문은 "바로바로" 이루어진다고 하셨습니다.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 새벽배송을 받으신 이후로 약국 운영이나 재고 관리 방식에 달라진 점이 있으신가요?</div>
+            <div class="qa-a">"여기 열어놓으면 새벽에 또 와서 그러면 아침에 또 직원들이 또 정리도 빨리빨리 할 수 있고... 언제든지 받아볼 수 있으니까 좋더라고요." 배송이 빠르다 보니 주문 여부를 헷갈리지 않고 바로바로 확인할 수 있게 됐다고도 언급.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 요즘 발주하실 때 가장 신경 쓰시는 부분은?</div>
+            <div class="qa-a">주문 누락·중복 방지. "내가 또 막 이거 저거 하다 보니까 또 내가 망각을 하고 또 약이 안 오니까 또 주문할 수도 있고 그래서 헷갈리니까"라며, 배송이 느린 채널은 주문 여부 확인이 어려웠는데 더샵플러스는 빠르게 도착해 바로 체크가 된다는 점을 긍정적으로 평가.</div>
+          </div>
+        </div>
+
+        <div class="qa-group">
+          <div class="qa-group-title">Part 2. 추가 확대 조건 파악</div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 지금 더샵플러스에서 구매하지 않고 타 채널로 남겨두신 품목이 있다면?</div>
+            <div class="qa-a">그런 품목 없음. 발주를 나눠서 하고 있음.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 결제조건(여신 한도, 정산주기)이나 가격조건이 개선된다면 발주 규모에 영향이 있을까요?</div>
+            <div class="qa-a">크게 상관없음.</div>
+          </div>
+          <div class="qa-item">
+            <div class="qa-q">Q. 더샵플러스가 딱 한 가지를 개선해준다면 발주를 더 늘리시겠다고 할 때, 그 한 가지는?</div>
+            <div class="qa-a">명시적인 개선 요청 사항은 없었습니다. "지금 현재 굉장히 만족을 하고 있어가지고 서비스는 이 정도로 충분하다고 나는 생각해"라고 답하며 현재 서비스 수준에 대한 만족을 재차 강조하셨습니다.</div>
+          </div>
+        </div>
+
+        <div class="followup-note">
+          미확인 영역(후속 인터뷰 필요): 최초 도입 계기 상세, 채널별 정확한 발주 비중(%), 결제조건·여신 한도, 카테고리별 채널 구분. 이번 녹취에서 직접 언급되지 않아 추측으로 채우지 않았습니다.
+        </div>
+      </div>
+
+      <div class="tag-row">
+        <span class="tag">배송속도</span>
+        <span class="tag">결품 없음</span>
+        <span class="tag">약사가운 로테이션</span>
+        <span class="tag">폐의약품 수거</span>
+        <span class="tag">동료 약사 추천 의향 있음</span>
+      </div>
+
+      <div class="highlight-box">
+        <div class="h-label">특이사항 — 스피커 활용 가능성</div>
+        <p>동료 약사님께 소개할 의향을 명확히 밝혔습니다. "이런 좋은 서비스들을 모른다고 하면... 우리 약사님들 만날 기회 있으면은... 이런 것도 이야기 한번 해보고"라며, <b style="color:var(--gold-ink)">1년에 한두 번 있는 약사 모임에서 소개하겠다</b>고 하셨습니다. 서울메디약국처럼 SPEAKER로 직접 요청드리진 않았지만, 추천 의향이 뚜렷해 향후 스피커 후보로 접촉해볼 가치가 있습니다.</p>
+      </div>
+    </section>
+
+    <footer class="note">
+      데이터 기준: 5~7월은 실측 월매출, 8월은 ~8/26 누계(진행중). VC 매출은 더샵 매출현황(VC2) 및 더샵플러스 회원 매출 현황 기준.<br />
+      인터뷰는 2026-08-26 실시된 국장님 녹취를 바탕으로 정리했습니다.
+    </footer>
+  </div>
+</div>
+
+<div class="tip" id="tooltip"></div>
+
+<script>
+(function(){
+  function fmtEok(n) {
+    if (n >= 100000000) return (n / 100000000).toFixed(1) + '억';
+    if (n >= 10000) return Math.round(n / 10000).toLocaleString('ko-KR') + '만';
+    return n.toLocaleString('ko-KR');
+  }
+
+  const tip = document.getElementById('tooltip');
+  function showTip(e, html) {
+    tip.innerHTML = html;
+    tip.style.left = (e.clientX + 14) + 'px';
+    tip.style.top = (e.clientY + 14) + 'px';
+    tip.classList.add('show');
+  }
+  function hideTip() { tip.classList.remove('show'); }
+
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs) {
+    const e = document.createElementNS(NS, tag);
+    for (const k in attrs) e.setAttribute(k, attrs[k]);
+    return e;
+  }
+
+  function renderChart(svgId, vcStatId, MONTHS) {
+    document.getElementById(vcStatId).textContent = fmtEok(MONTHS[3].vc);
+
+    const svg = document.getElementById(svgId);
+    const W = 660, H = 300, padTop = 28, padBottom = 34, padSide = 8;
+    const plotH = H - padTop - padBottom;
+    const groupW = (W - padSide * 2) / MONTHS.length;
+    const barW = 44, gap = 3;
+    const maxVal = Math.max(...MONTHS.flatMap(m => [m.reg, m.vc]));
+    const scale = v => (v / maxVal) * plotH;
+
+    MONTHS.forEach((m, i) => {
+      const cx = padSide + groupW * i + groupW / 2;
+      const regH = scale(m.reg), vcH = scale(m.vc);
+      const regX = cx - barW - gap / 2;
+      const vcX = cx + gap / 2;
+
+      const regBar = el('rect', { class: 'bar', x: regX, y: padTop + plotH - regH, width: barW, height: Math.max(regH,2), rx: 4, fill: 'var(--reg)' });
+      regBar.addEventListener('mousemove', e => showTip(e, m.label + ' 직거래<br><b>' + m.reg.toLocaleString('ko-KR') + '원</b>'));
+      regBar.addEventListener('mouseleave', hideTip);
+      svg.appendChild(regBar);
+
+      const vcBar = el('rect', { class: 'bar', x: vcX, y: padTop + plotH - vcH, width: barW, height: Math.max(vcH,2), rx: 4, fill: 'var(--vc)' });
+      vcBar.addEventListener('mousemove', e => showTip(e, m.label + ' VC<br><b>' + m.vc.toLocaleString('ko-KR') + '원</b>'));
+      vcBar.addEventListener('mouseleave', hideTip);
+      svg.appendChild(vcBar);
+
+      const regLabel = el('text', { class: 'bar-label', x: regX + barW / 2, y: padTop + plotH - regH - 7, 'text-anchor': 'middle' });
+      regLabel.textContent = fmtEok(m.reg);
+      svg.appendChild(regLabel);
+
+      const vcLabel = el('text', { class: 'bar-label', x: vcX + barW / 2, y: padTop + plotH - vcH - 7, 'text-anchor': 'middle' });
+      vcLabel.textContent = fmtEok(m.vc);
+      svg.appendChild(vcLabel);
+
+      const monthLabel = el('text', { class: 'month-label', x: cx, y: H - padBottom + 20, 'text-anchor': 'middle' });
+      monthLabel.textContent = m.partial ? m.label.replace(' (~26일)', '') : m.label;
+      svg.appendChild(monthLabel);
+
+      if (m.partial) {
+        const partialNote = el('text', { class: 'partial-note', x: cx, y: H - padBottom + 32, 'text-anchor': 'middle' });
+        partialNote.textContent = '(~26일 진행중)';
+        svg.appendChild(partialNote);
+      }
+    });
+
+    const baseline = el('line', { x1: padSide, y1: padTop + plotH, x2: W - padSide, y2: padTop + plotH, stroke: 'var(--border-strong)', 'stroke-width': 1 });
+    svg.insertBefore(baseline, svg.firstChild);
+  }
+
+  renderChart('chart-seoulmedi', 'v-vcaug-seoulmedi', [
+    { label: '5월', reg: 18398891, vc: 29583025 },
+    { label: '6월', reg: 17746222, vc: 34270996 },
+    { label: '7월', reg: 36554010, vc: 27748423 },
+    { label: '8월 (~26일)', reg: 19028406, vc: 55806106, partial: true },
+  ]);
+
+  renderChart('chart-ewha', 'v-vcaug-ewha', [
+    { label: '5월', reg: 18583366, vc: 57942326 },
+    { label: '6월', reg: 25682447, vc: 46756824 },
+    { label: '7월', reg: 28120985, vc: 59020702 },
+    { label: '8월 (~26일)', reg: 24219725, vc: 70328026, partial: true },
+  ]);
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (btn.classList.contains('active')) return;
+      document.querySelectorAll('.tab-btn').forEach(b => {
+        b.classList.toggle('active', b === btn);
+        b.setAttribute('aria-selected', b === btn ? 'true' : 'false');
+      });
+      const target = btn.dataset.tab;
+      document.querySelectorAll('.case-panel').forEach(p => {
+        p.classList.toggle('active', p.id === 'case-' + target);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
