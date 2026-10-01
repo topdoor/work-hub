@@ -2,7 +2,7 @@ const $ = s => document.querySelector(s);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const paths = {
  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
- home:'<path d="m3 10 9-7 9 7v10H15v-7H9v7H3z"/>',star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',folder:'<path d="M3 7V5a1 1 0 0 1 1-1h6l2 3h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',shield:'<path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/>',search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',plus:'<path d="M12 4v16M4 12h16"/>',refresh:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.7 7a7 7 0 0 1 12-1L20 9M4 15l2.3 3a7 7 0 0 0 12-1"/>',list:'<path d="M8 5h13M8 12h13M8 19h13M3 5h.1M3 12h.1M3 19h.1"/>',arrow:'<path d="M4 12h15m-6-6 6 6-6 6"/>',back:'<path d="M20 12H5m6-6-6 6 6 6"/>',external:'<path d="M14 3h7v7m0-7L10 14M10 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',chart:'<path d="M4 20h17M6 16v-5m6 5V7m6 9V3"/>',document:'<path d="M14 3H5v18h14V8zm0 0v5h5M8 12h8M8 16h6"/>',tasks:'<path d="m3 6 2 2 3-4m3 2h10M3 13l2 2 3-4m3 2h10M3 20l2 2 3-4m3 2h10"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18M7 15h3m4 0h3m-10 3h3"/>',table:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>',truck:'<path d="M2 5h12v12H2zm12 5h5l3 4v3h-8"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>'
+ home:'<path d="m3 10 9-7 9 7v10H15v-7H9v7H3z"/>',star:'<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/>',folder:'<path d="M3 7V5a1 1 0 0 1 1-1h6l2 3h8a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',shield:'<path d="m12 3 8 3v6c0 4-4 7-8 9-4-2-8-5-8-9V6z"/><path d="m8 12 3 3 5-6"/>',search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/>',plus:'<path d="M12 4v16M4 12h16"/>',refresh:'<path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.7 7a7 7 0 0 1 12-1L20 9M4 15l2.3 3a7 7 0 0 0 12-1"/>',list:'<path d="M8 5h13M8 12h13M8 19h13M3 5h.1M3 12h.1M3 19h.1"/>',arrow:'<path d="M4 12h15m-6-6 6 6-6 6"/>',back:'<path d="M20 12H5m6-6-6 6 6 6"/>',external:'<path d="M14 3h7v7m0-7L10 14M10 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-6"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',trash:'<path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/>',chart:'<path d="M4 20h17M6 16v-5m6 5V7m6 9V3"/>',document:'<path d="M14 3H5v18h14V8zm0 0v5h5M8 12h8M8 16h6"/>',tasks:'<path d="m3 6 2 2 3-4m3 2h10M3 13l2 2 3-4m3 2h10M3 20l2 2 3-4m3 2h10"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18M7 15h3m4 0h3m-10 3h3"/>',table:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/>',truck:'<path d="M2 5h12v12H2zm12 5h5l3 4v3h-8"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="19" r="2"/>',pencil:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13.5 6.5 4 4"/>'
 };
 function icon(name) { return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.folder}</svg>`; }
 function hydrate(root=document) { root.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon)); }
@@ -15,7 +15,9 @@ const validThumbnail = id => thumbnails.some(item=>item.id===id);
 const storedImages=read('momo.images',{});
 const imageOverrides=Object.fromEntries(Object.entries(storedImages && typeof storedImages==='object' && !Array.isArray(storedImages)?storedImages:{}).filter(([,value])=>validThumbnail(value)));
 const imageFor = b => imageOverrides[b.id] || (validThumbnail(b.art)?b.art:'document');
-let editingImageId=null;
+const storedNames=read('momo.names',{});
+const nameOverrides=Object.fromEntries(Object.entries(storedNames && typeof storedNames==='object' && !Array.isArray(storedNames)?storedNames:{}).filter(([,value])=>typeof value==='string'&&value.trim()));
+let editingImageId=null, renamingBoardId=null;
 function renderImagePicker(container,name,selected) {
  $(container).innerHTML=thumbnails.map(item=>`<label class="image-option"><input type="radio" name="${name}" value="${item.id}" ${selected===item.id?'checked':''}><span class="image-tile"><img src="${item.src}" alt="" loading="lazy"><span>${item.label}</span><i aria-hidden="true">✓</i></span></label>`).join('');
 }
@@ -33,7 +35,8 @@ const savedFolderAssignments=read('momo.folderAssignments',{});
 let folderAssignments=Object.fromEntries(Object.entries(savedFolderAssignments&&typeof savedFolderAssignments==='object'&&!Array.isArray(savedFolderAssignments)?savedFolderAssignments:{}).filter(([,name])=>typeof name==='string'&&name.trim()&&name!=='all'));
 let boards = [...imported,...custom];
 let movingBoardId=null;
-function rebuildBoards(){boards=[...imported,...custom].map(b=>({...b,category:folderAssignments[b.id]||b.category}));}
+function rebuildBoards(){boards=[...imported,...custom].map(b=>({...b,name:nameOverrides[b.id]||b.name,category:folderAssignments[b.id]||b.category}));}
+function showRenameDialog(id){const b=boards.find(b=>b.id===id);if(!b)return;renamingBoardId=id;const input=$('#rename-input');input.value=b.name;input.setCustomValidity('');$('#rename-reset').hidden=!nameOverrides[id];$('#rename-dialog').showModal();input.select();}
 
 const savedFavorites=read('momo.favorites',[]), savedRecent=read('momo.recent',[]);
 let favorites=new Set(Array.isArray(savedFavorites)?savedFavorites:[]);
@@ -54,7 +57,7 @@ function art(b) {
 
 function card(b) {
  const opening=b.kind==='local'?`<button class="card-open" data-open="${esc(b.id)}" aria-label="${esc(b.name)} 열기">`:`<a class="card-open" data-open="${esc(b.id)}" href="${esc(b.url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(b.name)} 새 탭에서 열기">`;
- return `<article class="board-card"><button class="change-image" data-image="${esc(b.id)}" aria-label="${esc(b.name)} 이미지 변경" title="이미지 변경">${icon('grid')}<span>이미지</span></button><button class="move-folder" data-move="${esc(b.id)}" aria-label="${esc(b.name)} 폴더 이동" title="폴더 이동">${icon('folder')}</button><button class="favorite ${favorites.has(b.id)?'selected':''}" data-favorite="${esc(b.id)}" aria-label="${esc(b.name)} 즐겨찾기" aria-pressed="${favorites.has(b.id)}">${icon('star')}</button>${opening}${art(b)}<div class="card-content"><h3>${esc(b.name)}</h3><p>${esc(b.description||'필요한 업무 화면으로 바로 이동하세요.')}</p><div class="card-bottom"><span class="card-tag">${icon('folder')}${esc(b.category)}</span><span class="open-label">${b.kind==='local'?'살펴보기':'새 탭'}${icon(b.kind==='local'?'arrow':'external')}</span></div></div>${b.kind==='local'?'</button>':'</a>'}${b.custom?`<button class="custom-delete" data-delete="${esc(b.id)}" aria-label="${esc(b.name)} 링크 삭제">${icon('trash')}</button>`:''}</article>`;
+ return `<article class="board-card"><button class="change-image" data-image="${esc(b.id)}" aria-label="${esc(b.name)} 이미지 변경" title="이미지 변경">${icon('grid')}<span>이미지</span></button><button class="rename-board" data-rename="${esc(b.id)}" aria-label="${esc(b.name)} 제목 변경" title="제목 변경">${icon('pencil')}</button><button class="move-folder" data-move="${esc(b.id)}" aria-label="${esc(b.name)} 폴더 이동" title="폴더 이동">${icon('folder')}</button><button class="favorite ${favorites.has(b.id)?'selected':''}" data-favorite="${esc(b.id)}" aria-label="${esc(b.name)} 즐겨찾기" aria-pressed="${favorites.has(b.id)}">${icon('star')}</button>${opening}${art(b)}<div class="card-content"><h3>${esc(b.name)}</h3><p>${esc(b.description||'필요한 업무 화면으로 바로 이동하세요.')}</p><div class="card-bottom"><span class="card-tag">${icon('folder')}${esc(b.category)}</span><span class="open-label">${b.kind==='local'?'살펴보기':'새 탭'}${icon(b.kind==='local'?'arrow':'external')}</span></div></div>${b.kind==='local'?'</button>':'</a>'}${b.custom?`<button class="custom-delete" data-delete="${esc(b.id)}" aria-label="${esc(b.name)} 링크 삭제">${icon('trash')}</button>`:''}</article>`;
 }
 function renderCategories() {
  const categories=categoryNames();
@@ -96,10 +99,11 @@ function handleOpen(event) { const opener=event.target.closest('[data-open]');if
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
 for(const selector of ['#folder-nav','#category-filters']) $(selector).addEventListener('click',event=>{const b=event.target.closest('[data-category]');if(!b)return;closeViewer();category=b.dataset.category;currentView='all';$('#search').value='';render();const focusTarget=[...document.querySelectorAll(`${selector} [data-category]`)].find(x=>x.dataset.category===category);focusTarget?.focus();});
 $('#board-grid').addEventListener('click',event=>{
+ const renameButton=event.target.closest('[data-rename]');if(renameButton){showRenameDialog(renameButton.dataset.rename);return;}
  const moveButton=event.target.closest('[data-move]');if(moveButton){showMoveDialog(moveButton.dataset.move);return;}
  const imageButton=event.target.closest('[data-image]');if(imageButton){showImagePicker(imageButton.dataset.image);return;}
  const fav=event.target.closest('[data-favorite]');if(fav){const id=fav.dataset.favorite;favorites.has(id)?favorites.delete(id):favorites.add(id);const ok=save('momo.favorites',[...favorites]);render();([...document.querySelectorAll('[data-favorite]')].find(x=>x.dataset.favorite===id)||$('#boards-title')).focus();if(ok)toast(favorites.has(id)?'즐겨찾기에 추가했습니다.':'즐겨찾기에서 해제했습니다.');return;}
- const del=event.target.closest('[data-delete]');if(del){const id=del.dataset.delete;custom=custom.filter(b=>b.id!==id);delete folderAssignments[id];save('momo.folderAssignments',folderAssignments);delete imageOverrides[id];save('momo.images',imageOverrides);boards=[...imported,...custom];const ok=save('momo.boards',custom);favorites.delete(id);save('momo.favorites',[...favorites]);recent=recent.filter(x=>x!==id);save('momo.recent',recent);render();$('#add-button').focus();if(ok)toast('추가한 링크를 삭제했습니다.');return;}
+ const del=event.target.closest('[data-delete]');if(del){const id=del.dataset.delete;custom=custom.filter(b=>b.id!==id);delete folderAssignments[id];save('momo.folderAssignments',folderAssignments);delete imageOverrides[id];save('momo.images',imageOverrides);delete nameOverrides[id];save('momo.names',nameOverrides);boards=[...imported,...custom];const ok=save('momo.boards',custom);favorites.delete(id);save('momo.favorites',[...favorites]);recent=recent.filter(x=>x!==id);save('momo.recent',recent);render();$('#add-button').focus();if(ok)toast('추가한 링크를 삭제했습니다.');return;}
  if(event.target.closest('#add-card')){showAdd();return;}handleOpen(event);
 });
 $('#recent-grid').addEventListener('click',handleOpen);
@@ -116,7 +120,7 @@ async function refreshCatalog(notify=false){
  try{const localServer=false;const endpoint=localServer?'/api/catalog':new URL('catalog.json',document.baseURI).href;const response=await fetch(endpoint,{cache:'no-store',signal:AbortSignal.timeout(5000)});if(!response.ok)throw new Error('catalog');const next=await response.json();if(!Array.isArray(next))throw new Error('catalog');imported=next;boards=[...imported,...custom];render();if(notify)toast(`${imported.length}개의 대시보드 목록을 불러왔습니다.`);}catch{if(notify)toast('목록을 새로 읽지 못했습니다. 잠시 후 다시 시도해주세요.');}finally{$('#refresh-folders').disabled=false;}
 }
 $('#refresh-folders').addEventListener('click',()=>refreshCatalog(true));
-document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('#add-dialog').open&&!$('#image-dialog').open&&!$('#folder-dialog').open&&!$('#move-dialog').open)closeViewer();if(event.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)&&!$('#add-dialog').open&&!$('#image-dialog').open&&!$('#folder-dialog').open&&!$('#move-dialog').open&&$('#viewer').hidden){event.preventDefault();$('#search').focus();}});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!document.querySelector('dialog[open]'))closeViewer();if(event.key==='/'&&!['INPUT','TEXTAREA'].includes(document.activeElement.tagName)&&!document.querySelector('dialog[open]')&&$('#viewer').hidden){event.preventDefault();$('#search').focus();}});
 const greetings=['필요한 보드부터 차근차근 살펴보세요.','자주 쓰는 보드는 별표로 챙겨둘 수 있어요.','잠깐 어깨를 펴고, 다시 시작해볼까요?','모모는 여기서 기다리고 있을게요.'];
 $('#momo').addEventListener('click',()=>{const message=greetings[greetingIndex++%greetings.length];$('#speech').textContent=message;if(matchMedia('(max-width:680px)').matches)toast(message);$('#momo').classList.remove('hello');void $('#momo').offsetWidth;$('#momo').classList.add('hello');});
 $('#today').textContent=new Intl.DateTimeFormat('ko-KR',{month:'long',day:'numeric',weekday:'long'}).format(new Date());
@@ -154,5 +158,21 @@ $('#custom-folder-list').addEventListener('click',event=>{
  const ok=save('momo.folders',userFolders)&&save('momo.folderAssignments',folderAssignments)&&save('momo.boards',custom);
  render();renderFolderManager();if($('#add-dialog').open)fillFolderSelect('#board-folder','내 링크');$('#folder-name').focus();if(ok)toast('폴더를 삭제했습니다. 안의 대시보드는 내 링크에 보관됩니다.');
 });
+$('#close-rename-dialog').addEventListener('click',()=>$('#rename-dialog').close());
+$('#rename-input').addEventListener('input',event=>event.target.setCustomValidity(''));
+function applyRename(name){
+ const id=renamingBoardId;if(!id)return;
+ if(name)nameOverrides[id]=name;else delete nameOverrides[id];
+ const ok=save('momo.names',nameOverrides);$('#rename-dialog').close();render();
+ [...document.querySelectorAll('[data-rename]')].find(b=>b.dataset.rename===id)?.focus();
+ if(ok)toast(name?`제목을 ‘${name}’(으)로 변경했습니다.`:'원래 제목으로 되돌렸습니다.');
+}
+$('#rename-form').addEventListener('submit',event=>{
+ event.preventDefault();const input=$('#rename-input'),name=input.value.trim();
+ if(!name){input.setCustomValidity('제목을 입력해주세요.');input.reportValidity();return;}
+ const original=[...imported,...custom].find(b=>b.id===renamingBoardId)?.name;
+ applyRename(name===original?'':name);
+});
+$('#rename-reset').addEventListener('click',()=>applyRename(''));
 hydrate();render();refreshCatalog();
 
