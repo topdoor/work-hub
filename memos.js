@@ -6,6 +6,9 @@
  dialog.innerHTML=`<div class="dialog-header"><span class="dialog-icon" data-icon="shield"></span><button type="button" class="icon-button" id="memo-close" aria-label="계정 메모 닫기">×</button></div><h2 id="memo-title">나의 계정 메모</h2><p id="memo-caption">비밀번호로 여는 개인 보관함</p><form id="memo-unlock"><label>보관함 비밀번호<input id="memo-password" type="password" required minlength="8" maxlength="1024" autocomplete="off" placeholder="8자 이상의 긴 비밀번호"></label><label id="memo-confirm-label" hidden>첫 설정 시 비밀번호 확인<input id="memo-confirm" type="password" autocomplete="off"></label><p class="memo-help" id="memo-help"></p><button class="primary-button submit-button" type="submit">보관함 열기</button></form><section id="memo-content" hidden><div class="memo-layout"><nav id="memo-files" aria-label="계정 메모 파일"></nav><div><h3 id="memo-file-title"></h3><label class="sr-only" for="memo-text">메모 내용</label><textarea id="memo-text" spellcheck="false" autocomplete="off"></textarea></div></div><div class="memo-actions"><button type="button" class="secondary-button" id="memo-lock">잠그기</button><button type="button" class="primary-button" id="memo-save">업데이트</button><button type="button" class="primary-button" id="memo-sync">메모장 → GitHub 동기화</button></div><p class="memo-help" id="memo-save-help"></p></section><p id="memo-status" role="status" aria-live="polite"></p>`;
  document.body.append(dialog); hydrate(dialog);
  const el=id=>document.getElementById(id);
+ el('memo-caption').textContent=local?'내 PC · 메모 수정 및 GitHub 동기화':'GitHub · 계정 메모 열람 전용';
+ if(!local){const link=document.createElement('a');link.className='primary-button';link.href='http://127.0.0.1:5173/?sync=1';link.target='_blank';link.rel='noopener noreferrer';link.textContent='내 PC에서 메모장 → GitHub 동기화';link.style.cssText='display:inline-flex;margin:8px 0 16px;padding:12px 16px';el('memo-caption').after(link);}
+
  const profile=document.querySelector('.profile');
  profile.setAttribute('role','button'); profile.setAttribute('tabindex','0'); profile.setAttribute('aria-label','계정 메모 열기');
  profile.querySelector('small').textContent='계정 메모 · 잠금 보관함';
@@ -57,4 +60,5 @@
   }catch(error){if(version===generation)status(error.message);}
   finally{busy=false;el('memo-sync').disabled=false;el('memo-save').disabled=false;el('memo-sync').textContent='메모장 → GitHub 동기화';el('memo-text').readOnly=!local;}
  });
+ if(local&&new URLSearchParams(location.search).has('sync'))open();
 })();
