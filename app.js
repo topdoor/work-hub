@@ -7,7 +7,7 @@ const paths = {
 function icon(name) { return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.folder}</svg>`; }
 function hydrate(root=document) { root.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon)); }
 function read(key,fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
-function save(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); return true; } catch { toast('저장 공간을 사용할 수 없어 이번 화면에서만 유지됩니다.'); return false; } }
+function save(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); if(['momo.boards','momo.deletedMenus'].includes(key))queueMicrotask(()=>window.dispatchEvent(new Event('myhub-menus-changed'))); return true; } catch { toast('저장 공간을 사용할 수 없어 이번 화면에서만 유지됩니다.'); return false; } }
 const thumbnails = [
  ['chart','매출·실적'],['document','보고서·문서'],['calendar','일정·스케줄'],['tasks','할 일·체크리스트'],['table','데이터·시트'],['truck','배송·물류'],['target','목표·전략'],['team','팀·협업'],['inventory','재고·상품'],['finance','정산·비용'],['evaluation','평가·품질'],['overview','종합·현황']
 ].map(([id,label])=>({id,label,src:`assets/thumbnails/${id}.svg`}));
@@ -33,9 +33,10 @@ const savedFolders=read('momo.folders',[]);
 let userFolders=[...new Set((Array.isArray(savedFolders)?savedFolders:[]).filter(name=>typeof name==='string'&&name.trim()&&name!=='all').map(name=>name.trim()))];
 const savedFolderAssignments=read('momo.folderAssignments',{});
 let folderAssignments=Object.fromEntries(Object.entries(savedFolderAssignments&&typeof savedFolderAssignments==='object'&&!Array.isArray(savedFolderAssignments)?savedFolderAssignments:{}).filter(([,name])=>typeof name==='string'&&name.trim()&&name!=='all'));
+let deletedMenus=new Set(read('momo.deletedMenus',[]));
 let boards = [...imported,...custom];
 let movingBoardId=null;
-function rebuildBoards(){boards=[...imported,...custom].map(b=>({...b,name:nameOverrides[b.id]||b.name,category:folderAssignments[b.id]||b.category}));}
+function rebuildBoards(){boards=[...imported,...custom].filter(b=>!deletedMenus.has(b.id)).map(b=>({...b,name:nameOverrides[b.id]||b.name,category:folderAssignments[b.id]||b.category}));}
 function showRenameDialog(id){const b=boards.find(b=>b.id===id);if(!b)return;renamingBoardId=id;const input=$('#rename-input');input.value=b.name;input.setCustomValidity('');$('#rename-reset').hidden=!nameOverrides[id];$('#rename-dialog').showModal();input.select();}
 
 const savedFavorites=read('momo.favorites',[]), savedRecent=read('momo.recent',[]);
@@ -57,7 +58,7 @@ function art(b) {
 
 function card(b) {
  const opening=b.kind==='local'?`<button class="card-open" data-open="${esc(b.id)}" aria-label="${esc(b.name)} 열기">`:`<a class="card-open" data-open="${esc(b.id)}" href="${esc(b.url)}" target="_blank" rel="noopener noreferrer" aria-label="${esc(b.name)} 새 탭에서 열기">`;
- return `<article class="board-card"><button class="change-image" data-image="${esc(b.id)}" aria-label="${esc(b.name)} 이미지 변경" title="이미지 변경">${icon('grid')}<span>이미지</span></button><button class="rename-board" data-rename="${esc(b.id)}" aria-label="${esc(b.name)} 제목 변경" title="제목 변경">${icon('pencil')}</button><button class="move-folder" data-move="${esc(b.id)}" aria-label="${esc(b.name)} 폴더 이동" title="폴더 이동">${icon('folder')}</button><button class="favorite ${favorites.has(b.id)?'selected':''}" data-favorite="${esc(b.id)}" aria-label="${esc(b.name)} 즐겨찾기" aria-pressed="${favorites.has(b.id)}">${icon('star')}</button>${opening}${art(b)}<div class="card-content"><h3>${esc(b.name)}</h3><p>${esc(b.description||'필요한 업무 화면으로 바로 이동하세요.')}</p><div class="card-bottom"><span class="card-tag">${icon('folder')}${esc(b.category)}</span><span class="open-label">${b.kind==='local'?'살펴보기':'새 탭'}${icon(b.kind==='local'?'arrow':'external')}</span></div></div>${b.kind==='local'?'</button>':'</a>'}${b.custom?`<button class="custom-delete" data-delete="${esc(b.id)}" aria-label="${esc(b.name)} 링크 삭제">${icon('trash')}</button>`:''}</article>`;
+ return `<article class="board-card"><button class="change-image" data-image="${esc(b.id)}" aria-label="${esc(b.name)} 이미지 변경" title="이미지 변경">${icon('grid')}<span>이미지</span></button><button class="rename-board" data-rename="${esc(b.id)}" aria-label="${esc(b.name)} 제목 변경" title="제목 변경">${icon('pencil')}</button><button class="move-folder" data-move="${esc(b.id)}" aria-label="${esc(b.name)} 폴더 이동" title="폴더 이동">${icon('folder')}</button><button class="favorite ${favorites.has(b.id)?'selected':''}" data-favorite="${esc(b.id)}" aria-label="${esc(b.name)} 즐겨찾기" aria-pressed="${favorites.has(b.id)}">${icon('star')}</button>${opening}${art(b)}<div class="card-content"><h3>${esc(b.name)}</h3><p>${esc(b.description||'필요한 업무 화면으로 바로 이동하세요.')}</p><div class="card-bottom"><span class="card-tag">${icon('folder')}${esc(b.category)}</span><span class="open-label">${b.kind==='local'?'살펴보기':'새 탭'}${icon(b.kind==='local'?'arrow':'external')}</span></div></div>${b.kind==='local'?'</button>':'</a>'}${`<button class="custom-delete" data-delete="${esc(b.id)}" aria-label="${esc(b.name)} 링크 삭제">${icon('trash')}</button>`}</article>`;
 }
 function renderCategories() {
  const categories=categoryNames();
@@ -103,7 +104,7 @@ $('#board-grid').addEventListener('click',event=>{
  const moveButton=event.target.closest('[data-move]');if(moveButton){showMoveDialog(moveButton.dataset.move);return;}
  const imageButton=event.target.closest('[data-image]');if(imageButton){showImagePicker(imageButton.dataset.image);return;}
  const fav=event.target.closest('[data-favorite]');if(fav){const id=fav.dataset.favorite;favorites.has(id)?favorites.delete(id):favorites.add(id);const ok=save('momo.favorites',[...favorites]);render();([...document.querySelectorAll('[data-favorite]')].find(x=>x.dataset.favorite===id)||$('#boards-title')).focus();if(ok)toast(favorites.has(id)?'즐겨찾기에 추가했습니다.':'즐겨찾기에서 해제했습니다.');return;}
- const del=event.target.closest('[data-delete]');if(del){const id=del.dataset.delete;custom=custom.filter(b=>b.id!==id);delete folderAssignments[id];save('momo.folderAssignments',folderAssignments);delete imageOverrides[id];save('momo.images',imageOverrides);delete nameOverrides[id];save('momo.names',nameOverrides);boards=[...imported,...custom];const ok=save('momo.boards',custom);favorites.delete(id);save('momo.favorites',[...favorites]);recent=recent.filter(x=>x!==id);save('momo.recent',recent);render();$('#add-button').focus();if(ok)toast('추가한 링크를 삭제했습니다.');return;}
+ const del=event.target.closest('[data-delete]');if(del){const id=del.dataset.delete;if(!confirm('이 메뉴를 삭제할까요? 원본 파일과 사이트는 그대로 유지됩니다.'))return;deletedMenus.add(id);save('momo.deletedMenus',[...deletedMenus]);custom=custom.filter(b=>b.id!==id);delete folderAssignments[id];save('momo.folderAssignments',folderAssignments);delete imageOverrides[id];save('momo.images',imageOverrides);delete nameOverrides[id];save('momo.names',nameOverrides);boards=[...imported,...custom];const ok=save('momo.boards',custom);favorites.delete(id);save('momo.favorites',[...favorites]);recent=recent.filter(x=>x!==id);save('momo.recent',recent);render();$('#add-button').focus();if(ok)toast('메뉴를 삭제했습니다.');return;}
  if(event.target.closest('#add-card')){showAdd();return;}handleOpen(event);
 });
 $('#recent-grid').addEventListener('click',handleOpen);
