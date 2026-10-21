@@ -7,7 +7,7 @@ const paths = {
 function icon(name) { return `<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths[name] || paths.folder}</svg>`; }
 function hydrate(root=document) { root.querySelectorAll('[data-icon]').forEach(el=>el.innerHTML=icon(el.dataset.icon)); }
 function read(key,fallback) { try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; } }
-function save(key,value) { try { localStorage.setItem(key,JSON.stringify(value)); if(['momo.boards','momo.deletedMenus'].includes(key))queueMicrotask(()=>window.dispatchEvent(new Event('myhub-menus-changed'))); return true; } catch { toast('저장 공간을 사용할 수 없어 이번 화면에서만 유지됩니다.'); return false; } }
+function save(key,value) { try { if(key==='momo.boards'||key==='momo.deletedMenus'){const state=MenuPersistence.write(key==='momo.boards'?value:custom,key==='momo.deletedMenus'?value:[...deletedMenus]);custom=state.boards;deletedMenus=new Set(state.deleted);}else localStorage.setItem(key,JSON.stringify(value)); if(['momo.boards','momo.deletedMenus'].includes(key))queueMicrotask(()=>window.dispatchEvent(new Event('myhub-menus-changed'))); return true; } catch { toast('저장 공간을 사용할 수 없어 이번 화면에서만 유지됩니다.'); return false; } }
 const thumbnails = [
  ['chart','매출·실적'],['document','보고서·문서'],['calendar','일정·스케줄'],['tasks','할 일·체크리스트'],['table','데이터·시트'],['truck','배송·물류'],['target','목표·전략'],['team','팀·협업'],['inventory','재고·상품'],['finance','정산·비용'],['evaluation','평가·품질'],['overview','종합·현황']
 ].map(([id,label])=>({id,label,src:`assets/thumbnails/${id}.svg`}));
@@ -27,7 +27,7 @@ function showImagePicker(id) {
 }
 function safeURL(value) { try { return ['https:','http:'].includes(new URL(value).protocol); } catch { return false; } }
 let imported = Array.isArray(window.DASHBOARD_CATALOG) ? window.DASHBOARD_CATALOG : [];
-const savedBoards = read('momo.boards',[]);
+const savedBoards = MenuPersistence.snapshot().boards;
 let custom = (Array.isArray(savedBoards)?savedBoards:[]).filter(b=>b && typeof b.id==='string' && typeof b.name==='string' && safeURL(b.url)).map(b=>({...b,kind:'external',category:typeof b.category==='string'&&b.category.trim()?b.category:'내 링크',color:'slate',art:validThumbnail(b.art)?b.art:'document',custom:true}));
 const savedFolders=read('momo.folders',[]);
 let userFolders=[...new Set((Array.isArray(savedFolders)?savedFolders:[]).filter(name=>typeof name==='string'&&name.trim()&&name!=='all').map(name=>name.trim()))];
@@ -177,3 +177,8 @@ $('#rename-form').addEventListener('submit',event=>{
 $('#rename-reset').addEventListener('click',()=>applyRename(''));
 hydrate();render();refreshCatalog();
 
+
+window.addEventListener('storage',event=>{
+ if(!['momo.boards','momo.deletedMenus','momo.boards.backup'].includes(event.key))return;
+ const state=MenuPersistence.snapshot(custom,[...deletedMenus]);custom=state.boards;deletedMenus=new Set(state.deleted);render();
+});

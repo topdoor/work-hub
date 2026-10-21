@@ -5,7 +5,7 @@
  document.getElementById('refresh-folders').before(button);
  let enabled=read('momo.pcMenuSync',false)===true, busy=false, again=false;
  async function sync(manual=false){
-  if(!enabled)return;if(busy){again=true;return;}busy=true;button.disabled=true;button.textContent='PC 연결 중…';
+  if(!enabled)return;const latest=MenuPersistence.snapshot(custom,[...deletedMenus]);custom=latest.boards;deletedMenus=new Set(latest.deleted);if(busy){again=true;return;}busy=true;button.disabled=true;button.textContent='PC 연결 중…';
   try{
    const response=await fetch('http://127.0.0.1:5175/menus/sync',{method:'POST',headers:{'Content-Type':'application/json','X-MyHub-Menus':'1'},body:JSON.stringify({boards:custom.map(b=>({...b,name:nameOverrides[b.id]||b.name,category:folderAssignments[b.id]||b.category})),deleted:[...deletedMenus]}),signal:AbortSignal.timeout(6000)});
    if(!response.ok)throw Error('bridge');const state=await response.json();
@@ -14,11 +14,12 @@
    // Include additions made while this request was running, and never resurrect a deletion.
    const combined=new Map(custom.map(b=>[b.id,b]));
    for(const b of state.boards)if(b&&typeof b.id==='string'&&typeof b.name==='string'&&safeURL(b.url)&&!combined.has(b.id))combined.set(b.id,{...b,custom:true});
-   const next=[...combined.values()].filter(b=>!removed.has(b.id));
+   const persisted=MenuPersistence.write([...combined.values()],[...removed]);
+   const next=persisted.boards;for(const id of persisted.deleted)removed.add(id);
    const changed=JSON.stringify(custom)!==JSON.stringify(next)||JSON.stringify([...deletedMenus].sort())!==JSON.stringify([...removed].sort());
    custom=next;deletedMenus=removed;
    // Direct storage avoids an endless change-event feedback loop.
-   localStorage.setItem('momo.boards',JSON.stringify(custom));localStorage.setItem('momo.deletedMenus',JSON.stringify([...deletedMenus]));
+
    if(changed)render();button.textContent='PC 연결됨';button.title='메뉴 추가·삭제를 PC 실행창과 자동으로 동기화하고 있습니다.';
    if(manual)toast('PC와 메뉴를 연결했습니다. 추가·삭제가 자동 반영됩니다.');
   }catch{
