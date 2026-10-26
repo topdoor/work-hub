@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "revision": "59f83fc8234694cc42f56ccce49e0f31e7cafba2c39eb42d995be5b54a243ac8",
+  "revision": "15067d2ae1991c625bf7b047ba1f51d46ce1d65bc3c178ef42e77251e3d8133c",
   "boards": [
     {
       "id": "board-1791245670929-v5tbu",
@@ -10,6 +10,17 @@
       "category": "유통지원팀 할일",
       "description": "",
       "art": "tasks",
+      "color": "slate",
+      "custom": true
+    },
+    {
+      "id": "board-shortage-pharmacy-allocation",
+      "name": "품절약",
+      "url": "https://shortage-pharmacy-allocation.mossy-charm-0662.chatgpt.site/app",
+      "kind": "external",
+      "category": "유통지원팀 할일",
+      "description": "품절약 배정 현황을 확인하세요.",
+      "art": "inventory",
       "color": "slate",
       "custom": true
     }
