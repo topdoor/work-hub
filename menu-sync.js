@@ -24,6 +24,18 @@
   const changed=JSON.stringify(custom)!==JSON.stringify(next.boards)||JSON.stringify([...deletedMenus].sort())!==JSON.stringify([...next.deleted].sort());
   custom=next.boards;deletedMenus=new Set(next.deleted);if(changed)render();
  }
+ window.MenuSync={async commit(boards=[],deleted=[]){
+  let response;
+  try{response=await fetch('http://127.0.0.1:5175/menus/commit',{method:'POST',headers:{'Content-Type':'application/json','X-MyHub-Menus':'1'},body:JSON.stringify({boards,deleted}),signal:AbortSignal.timeout(180000)});}
+  catch{throw Error('공통 저장을 확인하지 못했습니다. MY HUB PC 실행창을 켜고 로컬 네트워크 연결을 허용한 뒤 다시 시도해주세요. 입력 내용은 유지됩니다.');}
+  if(response.status===404)throw Error('PC 실행창을 닫았다가 다시 열어주세요. 저장 기능 업데이트가 필요합니다.');
+  const state=await response.json();
+  if(!response.ok||state.committed!==true)throw Error(state.error||'공통 저장을 확인하지 못했습니다. 다시 시도해주세요.');
+  if(boards.some(b=>!state.boards.some(saved=>saved.id===b.id))||deleted.some(id=>!state.deleted.includes(id)))throw Error('메뉴 저장 결과가 일치하지 않습니다. 입력 내용을 유지합니다.');
+  enabled=true;save('momo.pcMenuSync',true);publication=state.publication;
+  try{absorb(state);}catch{custom=state.boards;deletedMenus=new Set(state.deleted);render();}
+  button.textContent='PC 연결됨';showStatus();return state;
+ }};
  async function refreshShared(){
   if(cloudBusy)return;cloudBusy=true;
   try{

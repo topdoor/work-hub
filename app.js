@@ -94,17 +94,22 @@ function openBoard(id,opener) {
  lastOpener=opener;$('#viewer-title').textContent=b.name;$('#dashboard-frame').title=b.name;$('#external-link').href=b.url;$('#dashboard-frame').src=b.url;$('#viewer').hidden=false;$('#home-content').inert=true;document.body.style.overflow='hidden';$('#close-viewer').focus();
 }
 function setView(view) {closeViewer();currentView=view;category='all';$('#search').value='';render();}
-function showAdd() {fillFolderSelect('#board-folder',category==='all'?'내 링크':category);if(!$('#add-image-options input'))renderImagePicker('#add-image-options','thumbnail','document');$('#add-dialog').showModal();$('#add-form input[name="name"]').focus();}
+function showAdd() {
+ const draft=read('momo.pendingAdd',null);fillFolderSelect('#board-folder',draft?.category||(category==='all'?'내 링크':category));
+ if(!$('#add-image-options input'))renderImagePicker('#add-image-options','thumbnail',draft?.art||'document');
+ if(draft){for(const key of ['name','url','description'])$('#add-form').elements[key].value=draft[key]||'';$('#add-save-status').textContent='저장을 완료하지 못했던 입력입니다. 다시 저장할 수 있습니다.';}
+ $('#add-dialog').showModal();$('#add-form input[name="name"]').focus();
+}
 // Native links keep Ctrl/Cmd-click and browser pop-up behavior intact.
 function handleOpen(event) { const opener=event.target.closest('[data-open]');if(!opener)return;const b=boards.find(b=>b.id===opener.dataset.open);if(b?.kind==='local')event.preventDefault();openBoard(opener.dataset.open,opener); }
 document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
 for(const selector of ['#folder-nav','#category-filters']) $(selector).addEventListener('click',event=>{const b=event.target.closest('[data-category]');if(!b)return;closeViewer();category=b.dataset.category;currentView='all';$('#search').value='';render();const focusTarget=[...document.querySelectorAll(`${selector} [data-category]`)].find(x=>x.dataset.category===category);focusTarget?.focus();});
-$('#board-grid').addEventListener('click',event=>{
+$('#board-grid').addEventListener('click',async event=>{
  const renameButton=event.target.closest('[data-rename]');if(renameButton){showRenameDialog(renameButton.dataset.rename);return;}
  const moveButton=event.target.closest('[data-move]');if(moveButton){showMoveDialog(moveButton.dataset.move);return;}
  const imageButton=event.target.closest('[data-image]');if(imageButton){showImagePicker(imageButton.dataset.image);return;}
  const fav=event.target.closest('[data-favorite]');if(fav){const id=fav.dataset.favorite;favorites.has(id)?favorites.delete(id):favorites.add(id);const ok=save('momo.favorites',[...favorites]);render();([...document.querySelectorAll('[data-favorite]')].find(x=>x.dataset.favorite===id)||$('#boards-title')).focus();if(ok)toast(favorites.has(id)?'즐겨찾기에 추가했습니다.':'즐겨찾기에서 해제했습니다.');return;}
- const del=event.target.closest('[data-delete]');if(del){const id=del.dataset.delete;if(!confirm('이 메뉴를 삭제할까요? 원본 파일과 사이트는 그대로 유지됩니다.'))return;deletedMenus.add(id);save('momo.deletedMenus',[...deletedMenus]);custom=custom.filter(b=>b.id!==id);delete folderAssignments[id];save('momo.folderAssignments',folderAssignments);delete imageOverrides[id];save('momo.images',imageOverrides);delete nameOverrides[id];save('momo.names',nameOverrides);boards=[...imported,...custom];const ok=save('momo.boards',custom);favorites.delete(id);save('momo.favorites',[...favorites]);recent=recent.filter(x=>x!==id);save('momo.recent',recent);render();$('#add-button').focus();if(ok)toast('메뉴를 삭제했습니다.');return;}
+ const del=event.target.closest('[data-delete]');if(del){const id=del.dataset.delete;if(del.disabled||!confirm('이 메뉴를 모든 컴퓨터의 공통 목록에서 삭제할까요?'))return;del.disabled=true;try{await window.MenuSync.commit([],[id]);render();toast('삭제 내용을 공통 목록에 저장했습니다.');}catch(error){toast(error.message);}finally{del.disabled=false;}return;}
  if(event.target.closest('#add-card')){showAdd();return;}handleOpen(event);
 });
 $('#recent-grid').addEventListener('click',handleOpen);
@@ -112,7 +117,20 @@ $('#search').addEventListener('input',render);
 $('#add-button').addEventListener('click',showAdd);
 $('#close-dialog').addEventListener('click',()=>$('#add-dialog').close());
 $('#add-dialog').addEventListener('click',event=>{if(event.target!==event.currentTarget)return;const r=event.target.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)event.target.close();});
-$('#add-form').addEventListener('submit',event=>{event.preventDefault();const form=new FormData(event.target),name=form.get('name').trim(),url=form.get('url').trim();if(!name||!safeURL(url)){toast('이름과 http 또는 https 주소를 확인해주세요.');return;}custom.push({id:`board-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name,url,description:form.get('description').trim(),kind:'external',category:folderOptions().includes(form.get('folder'))?form.get('folder'):'내 링크',color:'slate',art:validThumbnail(form.get('thumbnail'))?form.get('thumbnail'):'document',custom:true});boards=[...imported,...custom];const ok=save('momo.boards',custom);category=custom[custom.length-1].category;currentView='all';$('#search').value='';render();$('#add-dialog').close();event.target.reset();if(ok)toast('새 대시보드를 추가했습니다.');});
+$('#add-form').addEventListener('submit',async event=>{
+ event.preventDefault();const formElement=event.target,submit=formElement.querySelector('[type="submit"]');if(submit.disabled)return;
+ const form=new FormData(formElement),name=form.get('name').trim(),url=form.get('url').trim();if(!name||!safeURL(url)){toast('이름과 http 또는 https 주소를 확인해주세요.');return;}
+ const prior=read('momo.pendingAdd',null);
+ const board={id:prior&&prior.name===name&&prior.url===url?prior.id:`board-${Date.now()}-${Math.random().toString(36).slice(2,7)}`,name,url,description:form.get('description').trim(),kind:'external',category:folderOptions().includes(form.get('folder'))?form.get('folder'):'내 링크',color:'slate',art:validThumbnail(form.get('thumbnail'))?form.get('thumbnail'):'document',custom:true};
+ save('momo.pendingAdd',board);submit.disabled=true;const label=submit.innerHTML;submit.textContent='공통 목록에 저장 중…';
+ const status=$('#add-save-status');status.textContent='PC 저장 및 GitHub 게시를 확인하고 있습니다.';
+ try{
+  await window.MenuSync.commit([board],[]);
+  category=board.category;currentView='all';$('#search').value='';render();
+  save('momo.pendingAdd',null);status.textContent='';$('#add-dialog').close();formElement.reset();toast('공통 목록에 저장했습니다. 사이트 반영에는 잠시 시간이 걸릴 수 있습니다.');
+ }catch(error){status.textContent=error.message;}
+ finally{submit.disabled=false;submit.innerHTML=label;}
+});
 $('#close-viewer').addEventListener('click',()=>{closeViewer();render();$('#search').focus();});
 for(const mode of ['grid','list']) $(`#${mode}-view`).addEventListener('click',()=>{layout=mode;save('momo.layout',mode);render();});
 async function refreshCatalog(notify=false){
